@@ -1,4 +1,3 @@
-
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 import re
 import json
@@ -34,10 +33,6 @@ import warnings
 warnings.filterwarnings('ignore')
 from PIL import ImageTk, Image
 import nfl_data_py as nfl
-#import nflfastpy as NFP
-
-Year=[2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022]
-
 from nba_api.stats.endpoints import leaguegamefinder, playbyplay, leaguegamelog,boxscoresummaryv2,boxscorematchups,playbyplayv2,boxscoretraditionalv2
 from nba_api.live.nba.endpoints import scoreboard
 from nba_api.live.nba import endpoints
@@ -71,8 +66,9 @@ gamefinder21 = leaguegamefinder.LeagueGameFinder(season_nullable='2021-22',
                                               league_id_nullable='00', 
                                               season_type_nullable='Regular Season')
 
-
+print("nba2")
 gamesa = gamefinder18.get_data_frames()[0]
+#gamesa1 = gamefinder18.get_data_frames()[0]
 gamesb = gamefinder19.get_data_frames()[0]
 gamesc = gamefinder20.get_data_frames()[0]
 gamesd = gamefinder21.get_data_frames()[0]
@@ -80,69 +76,35 @@ gamese = gamefinder17.get_data_frames()[0]
 #gamesf = gamefinder22.get_data_frames()[0]
 DF = [gamesa,gamesb,gamesc,gamesd,DFL,gamese]
 RST = pd.concat(DF)
-
-
-#CLE
-#LAL
-print("nba2")
-#TOR CHI
-T1 = 'DEN'
-T2 = 'IND'
-
-DFS = RST[RST['MATCHUP'].str.contains(T1)]
-DFA = DFS[DFS['MATCHUP'].str.contains(T2)]
-DFA
-DFR = DFA[DFA['GAME_ID'] == '0021801212']
-#print(DFR['PTS'].sum())
-RS = RST[RST['TEAM_ABBREVIATION'] == T1]
-R = RS['GAME_ID']
-DFA
-
-
-
-
-data = []
 print("nba3")
-for I in R:
-    hs = DFA[DFA['GAME_ID'] == I]
-    X,Y = hs.shape
-    #print(RST)
-    if X != 0:
-        TOTAL = hs['PTS'].sum()
-        DATE = hs['GAME_DATE'].values[0]
-        hsa = hs[hs['TEAM_ABBREVIATION'] == T1]
-        hsb = hs[hs['TEAM_ABBREVIATION'] ==  T2]
-        T1PTS = hsa['PTS'].values[0]
-        T2PTS = hsb['PTS'].values[0]
-        points = ['PTS_QTR1', 'PTS_QTR2', 'PTS_QTR3', 'PTS_QTR4']
-        
-        BS = boxscoresummaryv2.BoxScoreSummaryV2(I)
-        YS = BS.get_data_frames()[5]
-        T1DS = YS[YS['TEAM_ABBREVIATION']== T1]
-        T2DS = YS[YS['TEAM_ABBREVIATION']== T2]
-        T1Q1 = T1DS['PTS_QTR1'].values[0]
-        T1Q2 = T1DS['PTS_QTR2'].values[0]
-        T1Q3 = T1DS['PTS_QTR3'].values[0]
-        T1Q4 = T1DS['PTS_QTR4'].values[0]
-        
-        T2Q1 = T2DS['PTS_QTR1'].values[0]
-        T2Q2 = T2DS['PTS_QTR2'].values[0]
-        T2Q3 = T2DS['PTS_QTR3'].values[0]
-        T2Q4 = T2DS['PTS_QTR4'].values[0]
 
-        Gdata = [I,DATE,T1,T2,T1PTS,T2PTS,T1Q1,T1Q2,T1Q3,T1Q4,T2Q1,T2Q2,T2Q3,T2Q4,TOTAL]
-        data.append(Gdata)
-df = pd.DataFrame(data, columns=['GameID','Game_Date','T1', 'T2','T1Score','T2Score','T1Q1','T1Q2','T1Q3','T1Q4','T2Q1','T2Q2','T2Q3','T2Q4','Total'])
-print("nba4")
-DFJ = df.sort_values('Game_Date')
-print(DFJ['Total'].mean())
-DFJ
+T1 = 'CHA'
+DFS = RST[RST['TEAM_ABBREVIATION'].str.contains(T1)]
+print(DFS['PTS'].mean())
+print('===================================================')
+#DFS.plot(x='GAME_DATE', y='PTS', kind='line')	
+#plt.show()
 
-xsize,yszie = DFJ.shape
-TT = DFJ['Total'].sum()
-P = TT/220
-print(TT,P)
-#DFJ.groupby(['T1','T2']).mean()
-T = DFJ.groupby(['T1','T2']).mean()
-print(T)
+TM = ['IND','DEN']
+
+#for I in TM:
+DFS = RST[RST['TEAM_ABBREVIATION'].str.contains('IND')]
+DFID = RST[['GAME_ID','GAME_DATE','PTS']]
+print(DFID)
+data = []
+for I in DFID['GAME_ID']:
+    ID = I
+    DSF = DFID[DFID['GAME_ID'] == I]
+    Date = DFS['GAME_DATE'].values[0]
+    Total = DFS['PTS'].values[0]
+
+    BS = boxscoresummaryv2.BoxScoreSummaryV2(I)
+    YS = BS.get_data_frames()[5]
+    TDS = YS[YS['TEAM_ABBREVIATION']== T1]
+    print(TDS)
+
+
+df = pd.DataFrame(data, 'Game ID','Game Date','Abbr','QTR1','QTR2','QTR3','QTR4','Total' )
+print(df)
+print('===================================================')
 

@@ -46,16 +46,23 @@ PlayerDf = pd.DataFrame(nba_players)
 
 #76002
 
+
+
+print("=========================================")
+
+Ct = commonteamroster.CommonTeamRoster(season='2021-22',team_id='1610612737',
+                                              league_id_nullable='00')
+Roster = Ct.get_data_frames()[0]
+Coach = Ct.get_data_frames()[1]
+#print(Roster)
+#print(Roster.columns)
+RT = Roster[['PLAYER_ID','PLAYER','NICKNAME']]
+print(RT)
+print("=========================================")
+
 Pyid = playercareerstats.PlayerCareerStats(76002)
 
 Ptest = Pyid.get_data_frames()[0]
 print(Ptest.head())
 
-print("=========================================")
-
-Ct = commonteamroster.CommonTeamRoster(season='2021-22',team_id='1610612759',
-                                              league_id_nullable='00')
-Coach = Ct.get_data_frames()[0]
-Roster = Ct.get_data_frames()[1]
-print(Roster.shape)
 print("=========================================")
